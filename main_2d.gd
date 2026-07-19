@@ -68,6 +68,9 @@ func _process(delta: float) -> void:
 		island_map.call("move", Input.get_axis("move_left", "move_right"), delta)
 		_update_island_text()
 		return
+	# 根据 y 坐标动态设定玩家的绘制层级，保证在走进家具前方时能遮住家具、
+	# 走到家具后方时被家具遮住，与斜俯视的家具 z_index 基准保持一致。
+	player.z_index = int(player.position.y)
 	_update_prompt()
 
 func _input(event: InputEvent) -> void:
@@ -96,19 +99,56 @@ func _build_ship_layout() -> void:
 	_add_station("greenhouse_door", "温室 · 扩建门", Vector2(960, 590), Vector2(170, 70), Color("a5c991"))
 
 func _add_station(id: String, title: String, position_2d: Vector2, size: Vector2, color: Color) -> void:
+	# position_2d 仍为家具台面中心（与重构前含义一致，不影响交互半径和包裹生成坐标）。
+	# 靠玩家一侧加一块深色“正面”掷出厚度，让斜俯视下的家具有箱体感，而不是纯平面色块。
+	var depth := clampf(size.y * 0.32, 12.0, 30.0)
 	interactions[id] = {"position": position_2d, "radius": maxf(size.x, size.y) * 0.72}
-	var panel := Polygon2D.new()
-	panel.polygon = PackedVector2Array([position_2d + Vector2(-size.x/2,-size.y/2), position_2d + Vector2(size.x/2,-size.y/2), position_2d + Vector2(size.x/2,size.y/2), position_2d + Vector2(-size.x/2,size.y/2)])
-	panel.color = color
-	panel.z_index = int(position_2d.y) - 30
-	$ShipCabin.add_child(panel)
+	var half_w := size.x / 2.0
+	var half_h := size.y / 2.0
+	# 用家具“底边”（最靠近镜头的一侧）作为绘制顺序基准，与玩家脚下的 y 坐标同一套体系比较，
+	# 这样玩家走到家具前方时能正确遮住家具，走到后方时会被家具遮住。
+	var sort_base := int(position_2d.y + half_h + depth)
+
+	# 地面投影阴影，加强“物体立在地板上”的空间感。
+	var shadow := Polygon2D.new()
+	shadow.polygon = PackedVector2Array([Vector2(-half_w * 0.94, half_h + depth + 2), Vector2(half_w * 0.94, half_h + depth + 2), Vector2(half_w * 0.8, half_h + depth + 12), Vector2(-half_w * 0.8, half_h + depth + 12)])
+	shadow.color = Color(0, 0, 0, 0.22)
+	shadow.position = position_2d
+	shadow.z_index = sort_base - 4
+	$ShipCabin.add_child(shadow)
+
+	# 台面/顶面，保持与重构前相同的足边矩形，但用亮色版本表现受光面。
+	var top := Polygon2D.new()
+	top.polygon = PackedVector2Array([Vector2(-half_w, -half_h), Vector2(half_w, -half_h), Vector2(half_w, half_h), Vector2(-half_w, half_h)])
+	top.position = position_2d
+	top.color = color.lightened(0.06)
+	top.z_index = sort_base - 3
+	$ShipCabin.add_child(top)
+
+	# 正面（朝向玩家/镜头一侧），用主色的深色版本表现体块厚度。
+	var front := Polygon2D.new()
+	front.polygon = PackedVector2Array([Vector2(-half_w, half_h), Vector2(half_w, half_h), Vector2(half_w, half_h + depth), Vector2(-half_w, half_h + depth)])
+	front.position = position_2d
+	front.color = color.darkened(0.3)
+	front.z_index = sort_base - 2
+	$ShipCabin.add_child(front)
+
+	# 边框，强化色块轮廓。
+	var outline := Line2D.new()
+	outline.points = PackedVector2Array([Vector2(-half_w, -half_h), Vector2(half_w, -half_h), Vector2(half_w, half_h + depth), Vector2(-half_w, half_h + depth), Vector2(-half_w, -half_h)])
+	outline.position = position_2d
+	outline.width = 2.0
+	outline.default_color = color.darkened(0.5)
+	outline.z_index = sort_base - 1
+	$ShipCabin.add_child(outline)
+
 	var label := Label.new()
 	label.text = title
-	label.position = position_2d + Vector2(-size.x/2, -10)
+	label.position = position_2d + Vector2(-half_w, -half_h - 26)
 	label.size = Vector2(size.x, 30)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_font_size_override("font_size", 16)
-	label.z_index = int(position_2d.y) - 28
+	label.z_index = 4096
 	$ShipCabin.add_child(label)
 
 func _add_slot(id: String, kind: String, position_2d: Vector2) -> void:

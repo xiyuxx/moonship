@@ -40,4 +40,6 @@ static func pick_up(node: Node2D, player: Node2D) -> void:
 static func place(node: Node2D, root: Node2D, position_2d: Vector2) -> void:
 	node.reparent(root)
 	node.global_position = position_2d
-	node.z_index = int(position_2d.y)
+	# +100 固定偏移，保证包裹始终渲染在同一行家具的正面/台面之上（家具最大 half_h+depth 约 72），
+	# 不会被斜俯视家具的“正面”遮住，同时仍注重不同行之间的前后排序。
+	node.z_index = int(position_2d.y) + 100
