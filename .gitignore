@@ -1,0 +1,14 @@
+.godot/
+
+# Godot exports and local build outputs
+export.cfg
+export_presets.cfg
+build/
+dist/
+exports/
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+*.tmp
+*.log

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/views/island_view.gd" id="1_island"]
+
+[node name="IslandMap" type="Node2D"]
+script = ExtResource("1_island")
+map_id = "cat_town"

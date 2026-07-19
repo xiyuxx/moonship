@@ -1,0 +1,127 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/world/Station.tscn" id="1_station"]
+[ext_resource type="PackedScene" path="res://scenes/world/StorageSlot.tscn" id="2_slot"]
+
+[sub_resource type="Environment" id="Environment_ship"]
+background_mode = 1
+background_color = Color(0.203922, 0.286275, 0.407843, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.72549, 0.788235, 0.878431, 1)
+ambient_light_energy = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_floor"]
+size = Vector3(18, 0.4, 16)
+
+[sub_resource type="BoxMesh" id="BoxMesh_wall"]
+size = Vector3(18, 4.8, 0.35)
+
+[sub_resource type="StandardMaterial3D" id="Mat_floor"]
+albedo_color = Color(0.458824, 0.305882, 0.215686, 1)
+
+[sub_resource type="StandardMaterial3D" id="Mat_wall"]
+albedo_color = Color(0.890196, 0.835294, 0.741176, 1)
+
+[node name="ShipInterior" type="Node3D"]
+
+[node name="Environment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ship")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+rotation_degrees = Vector3(-55, -30, 0)
+light_energy = 1.6
+
+[node name="Geometry" type="Node3D" parent="."]
+
+[node name="Floor" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(0, -0.2, 0)
+mesh = SubResource("BoxMesh_floor")
+material_override = SubResource("Mat_floor")
+
+[node name="FrontWall" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(0, 2.2, -8)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("Mat_wall")
+
+[node name="BackWall" type="MeshInstance3D" parent="Geometry"]
+position = Vector3(0, 2.2, 8)
+mesh = SubResource("BoxMesh_wall")
+material_override = SubResource("Mat_wall")
+
+[node name="Stations" type="Node3D" parent="."]
+
+[node name="CounterLeft" parent="Stations" instance=ExtResource("1_station")]
+position = Vector3(-5.2, 1, -5.9)
+interaction_id = "counter_left"
+display_name = "取件窗口"
+
+[node name="CounterMiddle" parent="Stations" instance=ExtResource("1_station")]
+position = Vector3(0, 1, -5.9)
+interaction_id = "counter_middle"
+display_name = "取件窗口"
+
+[node name="CounterRight" parent="Stations" instance=ExtResource("1_station")]
+position = Vector3(5.2, 1, -5.9)
+interaction_id = "counter_right"
+display_name = "取件窗口"
+
+[node name="PackingStation" parent="Stations" instance=ExtResource("1_station")]
+position = Vector3(-1.8, 1, -2.4)
+interaction_id = "packing"
+display_name = "打包台"
+
+[node name="LabelStation" parent="Stations" instance=ExtResource("1_station")]
+position = Vector3(2.8, 1, -2.4)
+interaction_id = "label"
+display_name = "贴标与特殊标识台"
+
+[node name="Gangway" parent="Stations" instance=ExtResource("1_station")]
+position = Vector3(-7, 0.7, 1.5)
+interaction_id = "gangway"
+display_name = "下岛入口"
+
+[node name="Storage" type="Node3D" parent="."]
+
+[node name="Ambient01" parent="Storage" instance=ExtResource("2_slot")]
+position = Vector3(-1.5, 1.2, 2)
+slot_id = "常温货架_1"
+
+[node name="Ambient02" parent="Storage" instance=ExtResource("2_slot")]
+position = Vector3(0, 1.2, 2)
+slot_id = "常温货架_2"
+
+[node name="Ambient03" parent="Storage" instance=ExtResource("2_slot")]
+position = Vector3(1.5, 1.2, 2)
+slot_id = "常温货架_3"
+
+[node name="Ambient04" parent="Storage" instance=ExtResource("2_slot")]
+position = Vector3(-1.5, 1.2, 4)
+slot_id = "常温货架_4"
+
+[node name="Ambient05" parent="Storage" instance=ExtResource("2_slot")]
+position = Vector3(0, 1.2, 4)
+slot_id = "常温货架_5"
+
+[node name="Ambient06" parent="Storage" instance=ExtResource("2_slot")]
+position = Vector3(1.5, 1.2, 4)
+slot_id = "常温货架_6"
+
+[node name="Freezer01" parent="Storage" instance=ExtResource("2_slot")]
+position = Vector3(-6.2, 1.2, 4)
+slot_id = "冷冻室_1"
+storage_kind = "冷冻室"
+
+[node name="Freezer02" parent="Storage" instance=ExtResource("2_slot")]
+position = Vector3(-6.2, 1.2, 5.3)
+slot_id = "冷冻室_2"
+storage_kind = "冷冻室"
+
+[node name="Greenhouse01" parent="Storage" instance=ExtResource("2_slot")]
+position = Vector3(-6.2, 1.2, 6.5)
+slot_id = "温室_1"
+storage_kind = "温室"
+
+[node name="Greenhouse02" parent="Storage" instance=ExtResource("2_slot")]
+position = Vector3(-6.2, 1.2, 7.4)
+slot_id = "温室_2"
+storage_kind = "温室"

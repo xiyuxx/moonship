@@ -1,0 +1,20 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/maps/IslandMap.tscn" id="1_map"]
+
+[node name="IslandOverlay" type="CanvasLayer"]
+# 地图位于 HUD（默认第 1 层）之下，保证投递和确认对话始终可见。
+layer = 0
+visible = false
+
+[node name="MapViewport" type="Node2D" parent="."]
+
+[node name="IslandMap" parent="MapViewport" instance=ExtResource("1_map")]
+
+[node name="IslandText" type="Label" parent="."]
+offset_left = 35.0
+offset_top = 25.0
+offset_right = 985.0
+offset_bottom = 115.0
+autowrap_mode = 3
+theme_override_font_sizes/font_size = 20

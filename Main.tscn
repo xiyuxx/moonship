@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://y41tto4wj60v"]
+
+[ext_resource type="Script" uid="uid://4a0olsaik6ly" path="res://main.gd" id="1_main"]
+[ext_resource type="PackedScene" path="res://scenes/world/ShipInterior.tscn" id="2_ship"]
+[ext_resource type="PackedScene" path="res://scenes/player/Player.tscn" id="3_player"]
+[ext_resource type="PackedScene" path="res://scenes/ui/IslandOverlay.tscn" id="4_island"]
+
+[node name="MoonlitMail" type="Node3D" unique_id=158779106]
+script = ExtResource("1_main")
+
+[node name="ShipInterior" parent="." unique_id=1970074301 instance=ExtResource("2_ship")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.005846262, 0, -0.0013389587)
+
+[node name="Player" parent="." unique_id=15089674 instance=ExtResource("3_player")]
+transform = Transform3D(0.5083715, 0, -0.8611378, 0, 1, 0, 0.8611379, 0, 0.5083715, -2.4864576, 0.99248004, -4.8026285)
+
+[node name="Packages" type="Node3D" parent="." unique_id=1450807769]
+
+[node name="IslandOverlay" parent="." instance=ExtResource("4_island")]
